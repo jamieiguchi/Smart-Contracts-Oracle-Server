@@ -14,3 +14,5 @@ to this:
     if (helper.getCurrentWeatherByCityName("Missoula") !== "rain")
 
 Then, in the terminal, run: `nodemon server.js`. Check your log. If succesful, then check your deployed contract details on Etherscan. You should see that the contract balance was refunded to the owner, with a small amount going to the oracle for the transaction (gas) cost.
+
+If all works as intended, congrats! You ARE the one. If not, feel free to contact me with questions or to submit a PR.
