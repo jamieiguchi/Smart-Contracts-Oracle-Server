@@ -1,5 +1,5 @@
 # Smart-Contracts-Oracle-Server
-An oracle (Node.js server) that listens for a weather event and triggers a function contained in a smart contract deployed to an Ethereum testnet
+An oracle (Node.js server) that listens for a weather event and triggers a function contained in a smart contract deployed to an Ethereum testnet. This oracle makes use of the [ethers.js](https://docs.ethers.io/ethers.js/html/index.html) library. No Truffle or even web3.js required.
 
 Instructions for use/testing: Deploy an instance of `RainyDayContract-for-remix.sol`. As the filename indicates, Remix is the suggest way to do this, as it's the most straightforward. If you deploy the contract on a network other than Rinkeby, you'll need to change the corresponding parameter under the "NETWORK CONNECTION AND WALLET" section of `oracle.js`. Also, make sure that your deployed contract has whitelisted an account that your oracle will sign with and whose private key that you know.
 
