@@ -23,7 +23,35 @@ const helper = new OpenWeatherMapHelper({
 //      RAINY DAY CONTRACT DETAILS
 // ------------------------------------------------------------------
 
-const abi = [
+[
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "depositsBalance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "balance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
 	{
 		"constant": false,
 		"inputs": [],
@@ -67,36 +95,30 @@ const abi = [
 				"type": "uint256"
 			}
 		],
-		"name": "LogDepositMade",
+		"name": "Deposited",
 		"type": "event"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "balance",
-		"outputs": [
+		"anonymous": false,
+		"inputs": [
 			{
-				"name": "",
+				"indexed": false,
+				"name": "status",
+				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"name": "action",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "value",
 				"type": "uint256"
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "depositsBalance",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
+		"name": "ActionStatus",
+		"type": "event"
 	}
 ]
 
@@ -110,6 +132,7 @@ let contract = new ethers.Contract(deployedContractAddress, abi, wallet);
 // ------------------------------------------------------------------
 
 // Oracle process loop: If it's raining, create a transaction that triggers the deployed Rainy Day Contract's issueRefund() method, then terminate the whole loop. Else (if it's not raining), wait 10 seconds and restart.
+
 const oracleProcess = setInterval(function rainCheck() {
 
   if (helper.getCurrentWeatherByCityName("Missoula") == "rain") {
@@ -117,17 +140,16 @@ const oracleProcess = setInterval(function rainCheck() {
     console.log(".......... It's raining! The oracle will attempt to make a transaction with the deployed contract right now.");
 
     contract.issueRefund().then((tx, err) => {
-      console.log(".......... About to issue refund... ");
       if (tx) {
-        console.log(".......... Success! Rainy day refund issued to owner. Transaction details: ", tx)
+				contract.on("ActionStatus", (status, action, value) => {
+					console.log(".......... Success! Rainy day refund issued to owner. Transaction details: ", tx, "Contract event emissions: ", status, action, value)
+				});
       }
       if (err) {
         console.log(".......... Whoops! Something isn't right. Details: ", err)
       }
     })
-
     .then(clearInterval(oracleProcess));
-
   }
 
   else {

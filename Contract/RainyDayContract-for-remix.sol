@@ -15,7 +15,8 @@ contract RainyDayContract {
     address public oracleAddress = <YOUR PUBLIC ORACLE ADDRESS GOES HERE>;
 
     // Log event about deposit being mde by a client and its amount
-    event LogDepositMade(address accountAddress, uint amount);
+    event Deposited(address accountAddress, uint amount);
+    event ActionStatus(bool status, string action, uint256 value);
 
     // Constructor is "payable" so it can receive the initial funding of 1
     // Set owner to be the creator of this contract (i.e., the client)
@@ -28,7 +29,8 @@ contract RainyDayContract {
     // Display balance of individual owner after the deposit is made
     function deposit() public payable returns (uint) {
         balances[msg.sender] += msg.value;
-        emit LogDepositMade(msg.sender, msg.value);
+        emit Deposited(msg.sender, msg.value);
+        emit ActionStatus(true, "issue_refund", address(this).balance);
         return balances[msg.sender];
     }
 
@@ -62,6 +64,8 @@ contract RainyDayContract {
         oracleAddress.transfer(refundToOracle);
 
         owner.transfer(refundToOwner);
+
+        emit ActionStatus(false, "This contract is complete!", address(this).balance);
 
     }
 
